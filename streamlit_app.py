@@ -2,8 +2,44 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 
-# Configure page layout
+# Premium Executive Styling Injection
 st.set_page_config(page_title="Enterprise Capital Allocation Dashboard", layout="wide")
+
+# Custom CSS override to enforce an elite Bloomberg/FinTech dark palette
+st.markdown("""
+    <style>
+    /* Main app background and typography adjustments */
+    .stApp {
+        background-color: #0F141C;
+        color: #E2E8F0;
+    }
+    /* Metric Card container boxes styling */
+    div[data-testid="stMetricContainer"] {
+        background-color: #1A2332 !important;
+        border: 1px solid #2D3A4F !important;
+        padding: 15px 20px !important;
+        border-radius: 10px !important;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    }
+    /* Metric Label Text Colors */
+    div[data-testid="stMetricLabel"] > div {
+        color: #94A3B8 !important;
+        font-weight: 600 !important;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        letter-spacing: 0.05em;
+    }
+    /* Sidebar styling overrides */
+    section[data-testid="stSidebar"] {
+        background-color: #0A0E14 !important;
+        border-right: 1px solid #1E293B;
+    }
+    /* Line divider custom look */
+    hr {
+        border-color: #1E293B !important;
+    }
+    </style>
+""", unsafe_allow_html=True)
 
 # Sidebar Navigation Panel
 st.sidebar.title("Navigation Menu")
@@ -11,28 +47,25 @@ app_mode = st.sidebar.radio("Select Dashboard View", ["Executive Overview", "Liv
 
 # Main Header
 st.title("📊 Enterprise AI Investment & Capital Allocation Simulator")
-st.markdown("### Senior Executive AI Portfolio | Candidate: Gretchen")
+st.markdown("##### Senior Executive AI Portfolio | Candidate: Gretchen")
 st.write("---")
 
-# ADVANCED UPGRADE: Dynamically scrape the entire real-time S&P 500 company list from the web
-@st.cache_data # This keeps your app fast by remembering the data once loaded
+# Dynamically scrape the entire real-time S&P 500 company list
+@st.cache_data
 def load_sp500_data():
     try:
-        # Scrapes the official, live table of S&P 500 companies
         url = "https://wikipedia.org"
         tables = pd.read_html(url)
         sp500_df = tables[0][['Symbol', 'Security', 'GICS Sector']]
         sp500_df.columns = ['Ticker', 'Company Name', 'Sector']
         
-        # Generates realistic enterprise scale financial metrics for all 500 companies using a data formula
-        np.random.seed(42) # Keeps metrics stable
+        np.random.seed(42)
         sp500_df['Total Revenue ($B)'] = np.round(np.random.uniform(5.0, 400.0, len(sp500_df)), 1)
         sp500_df['Net Income ($B)'] = np.round(sp500_df['Total Revenue ($B)'] * np.random.uniform(0.05, 0.25, len(sp500_df)), 1)
         sp500_df['R&D Allocation ($B)'] = np.round(sp500_df['Net Income ($B)'] * np.random.uniform(0.10, 0.40, len(sp500_df)), 1)
         sp500_df['Operating Cash Flow ($B)'] = np.round(sp500_df['Net Income ($B)'] * np.random.uniform(1.1, 1.5, len(sp500_df)), 1)
         return sp500_df
     except Exception:
-        # Fallback dataset if internet scrapers face a connection lag
         fallback_data = {
             "Ticker": ["AAPL", "MSFT", "GOOGL", "AMZN", "NVDA"],
             "Company Name": ["Apple Inc.", "Microsoft Corp.", "Alphabet Inc.", "Amazon.com Inc.", "NVIDIA Corp."],
@@ -61,8 +94,7 @@ elif app_mode == "Live Corporate Data Ledger":
     st.subheader("📋 Real-Time S&P 500 Financial Statement Streams")
     st.write(f"Showing the active database stream of **{len(df)} market leaders** running inside your pipeline application layer:")
     
-    # Sector Filter Checkbox
-    selected_sectors = st.multiselect("Filter Ledger by Market Sector:", df["Sector"].unique(), default=df["Sector"].unique()[:3])
+    selected_sectors = st.multiselect("Filter Ledger by Market Sector:", sorted(df["Sector"].unique()), default=sorted(df["Sector"].unique())[:3])
     filtered_df = df[df["Sector"].isin(selected_sectors)]
     
     st.dataframe(filtered_df, use_container_width=True)
@@ -72,11 +104,9 @@ elif app_mode == "Capital Allocation Simulator":
     st.subheader("📈 Predictive Capital Allocation Simulation Engine")
     st.write("Adjust the budget sliders below to dynamically reallocate capital and simulate the 5-year valuation trajectory:")
     
-    # Targeted Selection Dropdown now displays ALL companies from the data stream!
     target_company = st.selectbox("Select Target Enterprise to Simulate:", sorted(df["Company Name"].unique()))
     company_row = df[df["Company Name"] == target_company].iloc[0]
     
-    # Financial Baseline Display
     st.markdown(f"#### Baseline Valuation & Metrics for **{target_company} ({company_row['Ticker']})**")
     c1, c2, c3 = st.columns(3)
     c1.metric("Current Revenue", f"${company_row['Total Revenue ($B)']}B")
@@ -86,11 +116,9 @@ elif app_mode == "Capital Allocation Simulator":
     st.write("---")
     st.markdown("#### Adjust Capital Allocation Strategy")
     
-    # Interactive Input Sliders
     rd_multiplier = st.slider("Modify R&D / Innovation Budget Multiplier (x):", 0.5, 3.0, 1.0, 0.1)
     capex_allocation = st.slider("Reallocate Free Cash Flow to Capital Expenditures (%):", 10, 80, 30, 5)
     
-    # Predictive Simulation Formulas (Python Math Logic)
     simulated_rd = company_row['R&D Allocation ($B)'] * rd_multiplier
     growth_factor = 1.0 + (0.05 * rd_multiplier) + (0.02 * (capex_allocation / 100))
     projected_valuation = (company_row['Net Income ($B)'] * 20) * growth_factor  
@@ -98,12 +126,10 @@ elif app_mode == "Capital Allocation Simulator":
     st.write("---")
     st.markdown("#### 📊 Simulated 5-Year Financial Strategy Projections")
     
-    # Display Simulated Results Metrics
     res1, res2 = st.columns(2)
     res1.metric("Simulated R&D Budget", f"${round(simulated_rd, 2)}B", f"{round((rd_multiplier - 1)*100, 1)}% Change")
     res2.metric("Projected Enterprise Valuation", f"${round(projected_valuation, 2)}B", f"+{round((growth_factor - 1)*100, 1)}% ROI Growth")
     
-    # Generate visual data chart tracking the simulated valuation path
     years = ['Year 1', 'Year 2', 'Year 3', 'Year 4', 'Year 5']
     base_val = company_row['Net Income ($B)'] * 20
     valuation_path = np.linspace(base_val, projected_valuation, 5)
@@ -115,4 +141,3 @@ elif app_mode == "Capital Allocation Simulator":
     
     st.line_chart(chart_data)
     st.success("🤖 Optimization Engine Status: Simulation formulas rendering dynamically in real-time.")
-
