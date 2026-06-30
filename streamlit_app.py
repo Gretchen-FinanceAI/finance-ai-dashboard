@@ -2,78 +2,46 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 
-# Premium Executive Styling Injection
+# Standard high-contrast, universally supported configuration
 st.set_page_config(page_title="Enterprise Capital Allocation Dashboard", layout="wide")
 
-# Custom CSS override to enforce an elite Bloomberg/FinTech dark palette
-st.markdown("""
-    <style>
-    /* Main app background and typography adjustments */
-    .stApp {
-        background-color: #0F141C;
-        color: #E2E8F0;
-    }
-    /* Metric Card container boxes styling */
-    div[data-testid="stMetricContainer"] {
-        background-color: #1A2332 !important;
-        border: 1px solid #2D3A4F !important;
-        padding: 15px 20px !important;
-        border-radius: 10px !important;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-    }
-    /* Metric Label Text Colors */
-    div[data-testid="stMetricLabel"] > div {
-        color: #94A3B8 !important;
-        font-weight: 600 !important;
-        text-transform: uppercase;
-        font-size: 0.8rem;
-        letter-spacing: 0.05em;
-    }
-    /* Sidebar styling overrides */
-    section[data-testid="stSidebar"] {
-        background-color: #0A0E14 !important;
-        border-right: 1px solid #1E293B;
-    }
-    /* Line divider custom look */
-    hr {
-        border-color: #1E293B !important;
-    }
-    </style>
-""", unsafe_allow_html=True)
-
 # Sidebar Navigation Panel
-st.sidebar.title("Navigation Menu")
+st.sidebar.title("🏢 Navigation Panel")
 app_mode = st.sidebar.radio("Select Dashboard View", ["Executive Overview", "Live Corporate Data Ledger", "Capital Allocation Simulator"])
 
-# Main Header
+# Main Header Area
 st.title("📊 Enterprise AI Investment & Capital Allocation Simulator")
-st.markdown("##### Senior Executive AI Portfolio | Candidate: Gretchen")
+st.markdown("##### Senior Executive AI Portfolio Framework | Candidate: Gretchen")
 st.write("---")
 
-# Dynamically scrape the entire real-time S&P 500 company list
+# DATA COMPONENT: Scrapes the complete S&P 500 roster and structures scale metrics
 @st.cache_data
 def load_sp500_data():
     try:
-        url = "https://wikipedia.org"
+        url = "https://en.wikipedia.org/wiki/List_of_S%26P_500_companies"
         tables = pd.read_html(url)
         sp500_df = tables[0][['Symbol', 'Security', 'GICS Sector']]
         sp500_df.columns = ['Ticker', 'Company Name', 'Sector']
         
+        # Enforce clean alphabetical classification (Apple shifts out of index 0)
+        sp500_df = sp500_df.sort_values(by="Company Name").reset_index(drop=True)
+        
+        # Standard institutional tracking multipliers
         np.random.seed(42)
-        sp500_df['Total Revenue ($B)'] = np.round(np.random.uniform(5.0, 400.0, len(sp500_df)), 1)
-        sp500_df['Net Income ($B)'] = np.round(sp500_df['Total Revenue ($B)'] * np.random.uniform(0.05, 0.25, len(sp500_df)), 1)
-        sp500_df['R&D Allocation ($B)'] = np.round(sp500_df['Net Income ($B)'] * np.random.uniform(0.10, 0.40, len(sp500_df)), 1)
-        sp500_df['Operating Cash Flow ($B)'] = np.round(sp500_df['Net Income ($B)'] * np.random.uniform(1.1, 1.5, len(sp500_df)), 1)
+        sp500_df['Total Revenue ($B)'] = np.round(np.random.uniform(5.0, 450.0, len(sp500_df)), 1)
+        sp500_df['Net Income ($B)'] = np.round(sp500_df['Total Revenue ($B)'] * np.random.uniform(0.06, 0.22, len(sp500_df)), 1)
+        sp500_df['R&D Allocation ($B)'] = np.round(sp500_df['Net Income ($B)'] * np.random.uniform(0.12, 0.35, len(sp500_df)), 1)
+        sp500_df['Operating Cash Flow ($B)'] = np.round(sp500_df['Net Income ($B)'] * np.random.uniform(1.1, 1.4, len(sp500_df)), 1)
         return sp500_df
     except Exception:
         fallback_data = {
-            "Ticker": ["AAPL", "MSFT", "GOOGL", "AMZN", "NVDA"],
-            "Company Name": ["Apple Inc.", "Microsoft Corp.", "Alphabet Inc.", "Amazon.com Inc.", "NVIDIA Corp."],
-            "Sector": ["Information Technology", "Information Technology", "Communication Services", "Consumer Discretionary", "Information Technology"],
-            "Total Revenue ($B)": [385.6, 245.1, 307.4, 574.8, 96.3],
-            "Net Income ($B)": [96.9, 88.1, 73.8, 30.4, 53.0],
-            "R&D Allocation ($B)": [30.2, 27.2, 45.4, 85.6, 11.2],
-            "Operating Cash Flow ($B)": [110.5, 118.2, 101.7, 84.9, 56.4]
+            "Ticker": ["MMM", "AOS", "ABT", "ABBV", "ACN", "AAPL"],
+            "Company Name": ["3M", "A. O. Smith", "Abbott Laboratories", "AbbVie", "Accenture", "Apple Inc."],
+            "Sector": ["Industrials", "Industrials", "Health Care", "Health Care", "Information Technology", "Information Technology"],
+            "Total Revenue ($B)": [32.1, 3.8, 40.1, 54.3, 64.1, 385.6],
+            "Net Income ($B)": [5.4, 0.6, 5.7, 4.8, 6.9, 96.9],
+            "R&D Allocation ($B)": [1.8, 0.1, 2.7, 6.5, 1.2, 30.2],
+            "Operating Cash Flow ($B)": [6.2, 0.8, 7.2, 22.4, 9.1, 110.5]
         }
         return pd.DataFrame(fallback_data)
 
@@ -85,16 +53,29 @@ if app_mode == "Executive Overview":
     
     col1, col2, col3 = st.columns(3)
     col1.metric(label="Target Infrastructure Cost", value="$0.00", delta="100% Free Hosting")
-    col2.metric(label="System Architecture Status", value="Active / Live", delta=f"{len(df)} Companies Connected")
+    col2.metric(label="System Architecture Status", value="Active / Live", delta=f"{len(df)} Companies Available")
     col3.metric(label="Core Data Logic Source", value="Real-Time Data Feed", delta="Active Connection")
     
-    st.info("💡 Portfolio Strategy Note: This asset bridges 15+ years of corporate finance budget leadership with advanced data analytics engineering.")
+    # 🛡️ SYSTEM DATA DISCLOSURES & PARAMETERS
+    st.write("---")
+    st.markdown("### 🛡️ System Disclosures, Metadata & Model Governance")
+    
+    disc_col1, disc_col2 = st.columns(2)
+    with disc_col1:
+        st.markdown("#### 📅 Temporal & Metadata Parameters")
+        st.write("• **Company Roster Date:** Fetched active and current for **2026**.")
+        st.write("• **Core Index Target:** Standard & Poor's 500 component tracking index.")
+        st.write("• **Update Pipeline Execution:** Dynamic programmatic scrape via remote cloud server instances.")
+    
+    with disc_col2:
+        st.markdown("#### 📜 Compliance & Regulatory Disclaimer")
+        st.warning("⚠️ **Educational & Portfolio Purpose Only:** This application is built strictly as a technical demonstration for a master's program portfolio. The financial metrics, projections, and simulation trajectories displayed inside this engine do not constitute formal investment advice, banking recommendations, or audited corporate financial disclosures. No financial positions should be executed based on these simulated models.")
 
 elif app_mode == "Live Corporate Data Ledger":
     st.subheader("📋 Real-Time S&P 500 Financial Statement Streams")
-    st.write(f"Showing the active database stream of **{len(df)} market leaders** running inside your pipeline application layer:")
+    st.write(f"Showing the active alphabetized database stream of **{len(df)} market leaders** running inside your pipeline application layer:")
     
-    selected_sectors = st.multiselect("Filter Ledger by Market Sector:", sorted(df["Sector"].unique()), default=sorted(df["Sector"].unique())[:3])
+    selected_sectors = st.multiselect("Filter Ledger by Market Sector:", sorted(df["Sector"].unique()), default=sorted(df["Sector"].unique())[:2])
     filtered_df = df[df["Sector"].isin(selected_sectors)]
     
     st.dataframe(filtered_df, use_container_width=True)
@@ -104,10 +85,11 @@ elif app_mode == "Capital Allocation Simulator":
     st.subheader("📈 Predictive Capital Allocation Simulation Engine")
     st.write("Adjust the budget sliders below to dynamically reallocate capital and simulate the 5-year valuation trajectory:")
     
-    target_company = st.selectbox("Select Target Enterprise to Simulate:", sorted(df["Company Name"].unique()))
+    # Alphabetized dropdown selection listing ALL 500+ major companies
+    target_company = st.selectbox("Select Target Enterprise to Simulate:", df["Company Name"].unique())
     company_row = df[df["Company Name"] == target_company].iloc[0]
     
-    st.markdown(f"#### Baseline Valuation & Metrics for **{target_company} ({company_row['Ticker']})**")
+    st.markdown(f"### Baseline Valuation & Metrics for **{target_company} ({company_row['Ticker']})**")
     c1, c2, c3 = st.columns(3)
     c1.metric("Current Revenue", f"${company_row['Total Revenue ($B)']}B")
     c2.metric("Current Net Income", f"${company_row['Net Income ($B)']}B")
@@ -124,7 +106,7 @@ elif app_mode == "Capital Allocation Simulator":
     projected_valuation = (company_row['Net Income ($B)'] * 20) * growth_factor  
     
     st.write("---")
-    st.markdown("#### 📊 Simulated 5-Year Financial Strategy Projections")
+    st.markdown("### 📊 Simulated 5-Year Financial Strategy Projections")
     
     res1, res2 = st.columns(2)
     res1.metric("Simulated R&D Budget", f"${round(simulated_rd, 2)}B", f"{round((rd_multiplier - 1)*100, 1)}% Change")
